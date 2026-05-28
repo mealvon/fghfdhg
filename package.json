@@ -1,0 +1,16 @@
+{
+    "name": "majestic-like-rp",
+    "version": "0.1.0",
+    "description": "Стартовый шаблон RP-сервера на RAGE:MP в стиле Majestic",
+    "main": "packages/majestic/index.js",
+    "type": "commonjs",
+    "scripts": {
+        "start": "echo \"Запустите ragemp-server.exe — он сам подгрузит packages/\""
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3"
+    },
+    "engines": {
+        "node": ">=18"
+    }
+}

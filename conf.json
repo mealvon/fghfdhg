@@ -1,0 +1,28 @@
+{
+    "maxplayers": 100,
+    "name": "Majestic-like Local RP",
+    "gamemode": "Roleplay",
+    "stream-distance": 500.0,
+    "announce": false,
+    "port": 22005,
+    "disallow-multiple-connections-per-ip": false,
+    "limit-time-of-connections-per-ip": 1000,
+    "url": "",
+    "language": "ru",
+    "sync-rate": 40,
+    "resource-scan-thread-limit": 0,
+    "max-ping": 120,
+    "min-fps": 24,
+    "max-packet-loss": 0.2,
+    "allow-cef-debugging": true,
+    "enable-nodejs": true,
+    "csharp": "disabled",
+    "enable-http-security": true,
+    "voice-chat": false,
+    "allow-voice-chat-input": 0,
+    "voice-chat-sample-rate": 24000,
+    "fastdl-host": "",
+    "node-flags": [
+        "--max-old-space-size=2048"
+    ]
+}
