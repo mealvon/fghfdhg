@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Majestic — Авторизация</title>
+<link rel="stylesheet" href="../shared/theme.css" />
+<style>
+body {
+    background: radial-gradient(ellipse at top, #1a2f5c 0%, #0a1428 60%, #050a18 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.wrap { width: 420px; padding: 36px 34px; }
+.logo {
+    text-align: center;
+    margin-bottom: 24px;
+}
+.logo h1 {
+    font-size: 36px;
+    background: linear-gradient(90deg, #f1c948, #d4af37, #f1c948);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Cinzel', 'Georgia', serif;
+    letter-spacing: 6px;
+}
+.logo p { color: var(--text-muted); font-size: 12px; margin-top: 4px; letter-spacing: 2px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 2px solid transparent;
+}
+.tab.active { color: var(--gold-bright); border-color: var(--gold); }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+.actions { margin-top: 22px; }
+.actions .m-btn { width: 100%; padding: 12px; font-size: 15px; }
+.msg {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--danger);
+    min-height: 18px;
+    text-align: center;
+}
+.footer { text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 18px; }
+</style>
+</head>
+<body>
+    <div class="wrap m-card">
+        <div class="logo">
+            <h1>MAJESTIC</h1>
+            <p>LOCAL ROLEPLAY</p>
+        </div>
+        <div class="tabs">
+            <button class="tab active" data-tab="login">Вход</button>
+            <button class="tab" data-tab="register">Регистрация</button>
+        </div>
+        <div class="field">
+            <label>Логин</label>
+            <input id="login" class="m-input" type="text" autocomplete="off" maxlength="20" />
+        </div>
+        <div class="field">
+            <label>Пароль</label>
+            <input id="password" class="m-input" type="password" maxlength="64" />
+        </div>
+        <div class="actions">
+            <button id="submit" class="m-btn">Войти</button>
+        </div>
+        <div id="msg" class="msg"></div>
+        <div class="footer">© Majestic-like RP — локальный сервер</div>
+    </div>
+<script>
+let mode = 'login';
+const tabs = document.querySelectorAll('.tab');
+const submit = document.getElementById('submit');
+const msg = document.getElementById('msg');
+
+tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    mode = t.dataset.tab;
+    submit.textContent = mode === 'login' ? 'Войти' : 'Зарегистрироваться';
+    msg.textContent = '';
+}));
+
+submit.addEventListener('click', () => {
+    const login = document.getElementById('login').value.trim();
+    const pw = document.getElementById('password').value;
+    msg.textContent = '';
+    if (!login || !pw) { msg.textContent = 'Заполните оба поля.'; return; }
+    const ev = mode === 'login' ? 'majestic:cef:auth:login' : 'majestic:cef:auth:register';
+    if (typeof mp !== 'undefined' && mp.trigger) mp.trigger(ev, login, pw);
+});
+
+window.showError = (text) => { msg.textContent = text; };
+
+document.getElementById('password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') submit.click();
+});
+</script>
+</body>
+</html>

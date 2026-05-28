@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>HUD</title>
+<link rel="stylesheet" href="../shared/theme.css" />
+<style>
+body { background: transparent; pointer-events: none; }
+.hud {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    width: 240px;
+    padding: 14px 16px;
+    background: linear-gradient(180deg, rgba(16,36,72,.92), rgba(10,20,40,.92));
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5);
+}
+.hud .row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+.hud .label { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+.hud .value { color: var(--gold-bright); font-weight: 700; font-size: 16px; font-family: 'Cinzel', 'Georgia', serif; }
+.hud .name {
+    text-align: center;
+    color: var(--gold-bright);
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+}
+.badge {
+    display: inline-block;
+    font-size: 10px;
+    background: linear-gradient(90deg, #f1c948, #d4af37);
+    color: #111;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+.hint {
+    position: absolute;
+    bottom: 20px;
+    left: 24px;
+    color: rgba(255,255,255,.45);
+    font-size: 11px;
+    background: rgba(0,0,0,.4);
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,.08);
+}
+</style>
+</head>
+<body>
+<div class="hud" id="hud" style="display:none">
+    <div class="name"><span id="name">—</span><span id="badge" class="badge" style="display:none">ADMIN</span></div>
+    <div class="row"><span class="label">Деньги</span><span class="value">$<span id="money">0</span></span></div>
+    <div class="row"><span class="label">Уровень админа</span><span class="value" id="level">0</span></div>
+</div>
+<div class="hint" id="hint" style="display:none">F2 — админ-панель</div>
+<script>
+let state = { login: '—', money: 0, adminLevel: 0 };
+
+window.updateHUD = (data) => {
+    state = Object.assign(state, data);
+    document.getElementById('hud').style.display = 'block';
+    document.getElementById('name').textContent = state.login;
+    document.getElementById('money').textContent = formatMoney(state.money);
+    document.getElementById('level').textContent = state.adminLevel || 0;
+    const badge = document.getElementById('badge');
+    badge.style.display = (state.adminLevel || 0) > 0 ? 'inline-block' : 'none';
+    if ((state.adminLevel || 0) > 0) document.getElementById('hint').style.display = 'block';
+};
+
+window.setMoney = (m) => {
+    state.money = m;
+    document.getElementById('money').textContent = formatMoney(m);
+};
+
+function formatMoney(n) {
+    return (Number(n) || 0).toLocaleString('ru-RU');
+}
+</script>
+</body>
+</html>

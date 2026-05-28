@@ -1,0 +1,77 @@
+/* Общий стиль Majestic-like: тёмно-синий + золото */
+:root {
+    --bg-primary: #0a1428;
+    --bg-secondary: #102448;
+    --bg-card: rgba(16, 36, 72, 0.92);
+    --border: rgba(212, 175, 55, 0.35);
+    --gold: #d4af37;
+    --gold-bright: #f1c948;
+    --text: #e8edf5;
+    --text-muted: #8aa1c4;
+    --danger: #ef4444;
+    --success: #22c55e;
+    --info: #3b82f6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    color: var(--text);
+    font-family: 'Inter', 'Roboto', 'Segoe UI', sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+    user-select: none;
+}
+
+.m-btn {
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+    color: #1a1a1a;
+    border: none;
+    padding: 10px 18px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform .1s, filter .1s;
+    letter-spacing: .3px;
+}
+.m-btn:hover { filter: brightness(1.1); }
+.m-btn:active { transform: scale(0.97); }
+.m-btn.secondary {
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+.m-btn.danger {
+    background: linear-gradient(180deg, #f87171, var(--danger));
+    color: #fff;
+}
+
+.m-input {
+    width: 100%;
+    background: rgba(0,0,0,.35);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+.m-input:focus { border-color: var(--gold); }
+
+.m-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+}
+
+.m-title {
+    font-family: 'Cinzel', 'Georgia', serif;
+    color: var(--gold-bright);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
