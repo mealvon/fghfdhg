@@ -6,103 +6,224 @@
 <link rel="stylesheet" href="../shared/theme.css" />
 <style>
 body {
-    background: radial-gradient(ellipse at top, #1a2f5c 0%, #0a1428 60%, #050a18 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
+    overflow: hidden;
 }
-.wrap { width: 420px; padding: 36px 34px; }
-.logo {
-    text-align: center;
-    margin-bottom: 24px;
+/* Городской анимированный фон */
+.bg {
+    position: fixed; inset: 0;
+    background:
+        radial-gradient(ellipse at 20% 0%, rgba(212,175,55,.15), transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(59,130,246,.18), transparent 50%),
+        linear-gradient(180deg, #0a1024 0%, #04060d 100%);
+    overflow: hidden;
 }
+.bg::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        repeating-linear-gradient(180deg, transparent 0, transparent 38px, rgba(255,255,255,.025) 38px, rgba(255,255,255,.025) 39px),
+        repeating-linear-gradient(90deg, transparent 0, transparent 48px, rgba(255,255,255,.02) 48px, rgba(255,255,255,.02) 49px);
+}
+/* Силуэт города */
+.skyline {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 35vh;
+    background:
+        linear-gradient(180deg, transparent, rgba(0,0,0,.6) 60%, #000),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 600' preserveAspectRatio='xMidYMax slice'><g fill='%23050a18'><rect x='0' y='340' width='80' height='260'/><rect x='90' y='240' width='100' height='360'/><rect x='200' y='300' width='60' height='300'/><rect x='270' y='180' width='120' height='420'/><rect x='400' y='280' width='90' height='320'/><rect x='500' y='150' width='150' height='450'/><rect x='660' y='220' width='80' height='380'/><rect x='750' y='100' width='180' height='500'/><rect x='940' y='260' width='110' height='340'/><rect x='1060' y='180' width='140' height='420'/><rect x='1210' y='310' width='90' height='290'/><rect x='1310' y='220' width='130' height='380'/><rect x='1450' y='140' width='160' height='460'/><rect x='1620' y='260' width='100' height='340'/><rect x='1730' y='180' width='190' height='420'/></g><g fill='%23d4af37' opacity='0.4'><circle cx='130' cy='280' r='2'/><circle cx='160' cy='340' r='2'/><circle cx='310' cy='220' r='2'/><circle cx='350' cy='320' r='2'/><circle cx='520' cy='200' r='2'/><circle cx='580' cy='280' r='2'/><circle cx='620' cy='360' r='2'/><circle cx='790' cy='160' r='2'/><circle cx='830' cy='240' r='2'/><circle cx='870' cy='320' r='2'/><circle cx='980' cy='300' r='2'/><circle cx='1090' cy='220' r='2'/><circle cx='1140' cy='340' r='2'/><circle cx='1350' cy='280' r='2'/><circle cx='1490' cy='200' r='2'/><circle cx='1540' cy='340' r='2'/><circle cx='1770' cy='240' r='2'/><circle cx='1820' cy='340' r='2'/></g></svg>") center bottom/cover no-repeat;
+}
+/* Частицы (звёзды/огоньки) */
+.particles { position: absolute; inset: 0; }
+.particles span {
+    position: absolute; display: block;
+    width: 2px; height: 2px; background: var(--gold-1);
+    border-radius: 50%;
+    opacity: 0.6;
+    box-shadow: 0 0 6px var(--gold-glow);
+    animation: float 6s linear infinite;
+}
+@keyframes float {
+    0% { transform: translateY(0); opacity: 0; }
+    20% { opacity: 0.8; }
+    100% { transform: translateY(-100vh); opacity: 0; }
+}
+
+/* Карточка авторизации */
+.wrap {
+    position: relative;
+    z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; height: 100%;
+}
+.card {
+    width: 460px;
+    padding: 40px 44px 32px;
+    animation: cardIn .6s cubic-bezier(.2,.9,.3,1.2) both;
+}
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.logo { text-align: center; margin-bottom: 6px; }
+.logo .crown { margin-bottom: 4px; }
 .logo h1 {
-    font-size: 36px;
-    background: linear-gradient(90deg, #f1c948, #d4af37, #f1c948);
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 48px;
+    font-weight: 700;
+    background: linear-gradient(180deg, #fff8d6 0%, var(--gold-1) 40%, var(--gold-2) 70%, var(--gold-3) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-family: 'Cinzel', 'Georgia', serif;
-    letter-spacing: 6px;
+    letter-spacing: 12px;
+    margin-left: 12px;
+    text-shadow: 0 4px 20px var(--gold-glow);
 }
-.logo p { color: var(--text-muted); font-size: 12px; margin-top: 4px; letter-spacing: 2px; }
-.tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.logo .tagline {
+    color: var(--text-mute);
+    font-size: 11px;
+    letter-spacing: 8px;
+    margin-top: 2px;
+    text-transform: uppercase;
+}
+.divider { margin: 28px 0 24px; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 22px; background: rgba(0,0,0,.3); border-radius: 4px; padding: 4px; }
 .tab {
-    flex: 1;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    padding: 12px;
-    cursor: pointer;
-    font-size: 14px;
-    border-bottom: 2px solid transparent;
+    flex: 1; padding: 10px;
+    background: none; border: none;
+    color: var(--text-mute);
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; font-weight: 600;
+    border-radius: 3px;
+    transition: all .2s;
 }
-.tab.active { color: var(--gold-bright); border-color: var(--gold); }
-.field { margin-bottom: 14px; }
-.field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-.actions { margin-top: 22px; }
-.actions .m-btn { width: 100%; padding: 12px; font-size: 15px; }
+.tab.active {
+    background: linear-gradient(180deg, var(--gold-1), var(--gold-2));
+    color: #1a1408;
+    box-shadow: 0 2px 8px var(--gold-glow);
+}
+.field { margin-bottom: 16px; }
+.field label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-mute);
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.actions { margin-top: 24px; }
+.actions .m-btn { width: 100%; padding: 14px; font-size: 14px; }
 .msg {
-    margin-top: 14px;
-    font-size: 13px;
-    color: var(--danger);
-    min-height: 18px;
+    margin-top: 16px;
+    min-height: 36px;
+    font-size: 12px;
     text-align: center;
+    color: var(--danger);
+    background: rgba(239,68,68,.08);
+    border: 1px solid rgba(239,68,68,.3);
+    padding: 9px 12px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity .2s;
 }
-.footer { text-align: center; color: var(--text-muted); font-size: 11px; margin-top: 18px; }
+.msg.show { opacity: 1; }
+.footer {
+    text-align: center;
+    color: var(--text-mute);
+    font-size: 10px;
+    margin-top: 22px;
+    letter-spacing: 2px;
+}
+.tagver {
+    color: var(--gold-3);
+    font-size: 10px;
+    letter-spacing: 1px;
+}
 </style>
 </head>
 <body>
-    <div class="wrap m-card">
-        <div class="logo">
-            <h1>MAJESTIC</h1>
-            <p>LOCAL ROLEPLAY</p>
-        </div>
-        <div class="tabs">
-            <button class="tab active" data-tab="login">Вход</button>
-            <button class="tab" data-tab="register">Регистрация</button>
-        </div>
-        <div class="field">
-            <label>Логин</label>
-            <input id="login" class="m-input" type="text" autocomplete="off" maxlength="20" />
-        </div>
-        <div class="field">
-            <label>Пароль</label>
-            <input id="password" class="m-input" type="password" maxlength="64" />
-        </div>
-        <div class="actions">
-            <button id="submit" class="m-btn">Войти</button>
-        </div>
-        <div id="msg" class="msg"></div>
-        <div class="footer">© Majestic-like RP — локальный сервер</div>
+    <div class="bg">
+        <div class="particles" id="particles"></div>
+        <div class="skyline"></div>
     </div>
+
+    <div class="wrap">
+        <div class="card m-card">
+            <div class="logo">
+                <div class="crown"></div>
+                <h1>MAJESTIC</h1>
+                <div class="tagline">LOCAL ROLEPLAY</div>
+            </div>
+
+            <div class="divider m-divider">ВХОД В ГОРОД</div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="login">Вход</button>
+                <button class="tab" data-tab="register">Регистрация</button>
+            </div>
+
+            <div class="field">
+                <label>Логин персонажа</label>
+                <input id="login" class="m-input" type="text" autocomplete="off" maxlength="20" placeholder="Например: Ivan_Petrov" />
+            </div>
+            <div class="field">
+                <label>Пароль</label>
+                <input id="password" class="m-input" type="password" maxlength="64" placeholder="••••••••" />
+            </div>
+
+            <div class="actions">
+                <button id="submit" class="m-btn">Войти в игру</button>
+            </div>
+
+            <div id="msg" class="msg"></div>
+
+            <div class="footer">© MAJESTIC <span class="tagver">v0.2 LOCAL</span></div>
+        </div>
+    </div>
+
 <script>
+// Частицы
+const p = document.getElementById('particles');
+for (let i = 0; i < 40; i++) {
+    const s = document.createElement('span');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.bottom = '-10px';
+    s.style.animationDelay = (Math.random() * 6) + 's';
+    s.style.animationDuration = (4 + Math.random() * 6) + 's';
+    s.style.opacity = (0.2 + Math.random() * 0.6).toFixed(2);
+    p.appendChild(s);
+}
+
 let mode = 'login';
 const tabs = document.querySelectorAll('.tab');
 const submit = document.getElementById('submit');
-const msg = document.getElementById('msg');
+const msgEl = document.getElementById('msg');
 
 tabs.forEach(t => t.addEventListener('click', () => {
     tabs.forEach(x => x.classList.remove('active'));
     t.classList.add('active');
     mode = t.dataset.tab;
-    submit.textContent = mode === 'login' ? 'Войти' : 'Зарегистрироваться';
-    msg.textContent = '';
+    submit.textContent = mode === 'login' ? 'Войти в игру' : 'Зарегистрироваться';
+    msgEl.classList.remove('show');
 }));
 
 submit.addEventListener('click', () => {
     const login = document.getElementById('login').value.trim();
     const pw = document.getElementById('password').value;
-    msg.textContent = '';
-    if (!login || !pw) { msg.textContent = 'Заполните оба поля.'; return; }
+    msgEl.classList.remove('show');
+    if (!login || !pw) { showErr('Заполните логин и пароль.'); return; }
     const ev = mode === 'login' ? 'majestic:cef:auth:login' : 'majestic:cef:auth:register';
     if (typeof mp !== 'undefined' && mp.trigger) mp.trigger(ev, login, pw);
+    submit.disabled = true;
+    submit.style.opacity = '.6';
+    setTimeout(() => { submit.disabled = false; submit.style.opacity = '1'; }, 1500);
 });
 
-window.showError = (text) => { msg.textContent = text; };
+function showErr(text) { msgEl.textContent = text; msgEl.classList.add('show'); }
+window.showError = showErr;
 
-document.getElementById('password').addEventListener('keydown', e => {
-    if (e.key === 'Enter') submit.click();
-});
+document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') submit.click(); });
+document.getElementById('login').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('password').focus(); });
 </script>
 </body>
 </html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Notify</title>
+<link rel="stylesheet" href="../shared/theme.css" />
+<style>
+body { background: transparent; pointer-events: none; }
+.stack {
+    position: fixed;
+    top: 110px;
+    right: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 320px;
+}
+.notify {
+    position: relative;
+    background: linear-gradient(180deg, rgba(15,23,52,.97), rgba(10,16,36,.97));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold-2);
+    border-radius: 4px;
+    padding: 12px 14px 12px 18px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.7);
+    animation: slideIn .4s cubic-bezier(.2,.9,.3,1.2) both;
+    overflow: hidden;
+}
+.notify.exit { animation: slideOut .3s ease forwards; }
+@keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slideOut { to { transform: translateX(120%); opacity: 0; } }
+
+.notify.success { border-left-color: var(--success); }
+.notify.error   { border-left-color: var(--danger); }
+.notify.warn    { border-left-color: var(--warn); }
+.notify.info    { border-left-color: var(--info); }
+
+.notify .title {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--gold-1);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+.notify.success .title { color: var(--success); }
+.notify.error   .title { color: var(--danger); }
+.notify.warn    .title { color: var(--warn); }
+.notify.info    .title { color: var(--info); }
+.notify .text { color: var(--text); font-size: 13px; line-height: 1.4; }
+.notify .progress {
+    position: absolute; bottom: 0; left: 0;
+    height: 2px; background: var(--gold-2);
+    animation: shrink 4s linear forwards;
+}
+@keyframes shrink { from { width: 100%; } to { width: 0; } }
+</style>
+</head>
+<body>
+<div class="stack" id="stack"></div>
+<script>
+const stack = document.getElementById('stack');
+window.pushNotify = ({ type = 'info', title = 'Уведомление', text = '' }) => {
+    const el = document.createElement('div');
+    el.className = 'notify ' + type;
+    el.innerHTML = `<div class="title">${escapeHtml(title)}</div><div class="text">${escapeHtml(text)}</div><div class="progress"></div>`;
+    stack.appendChild(el);
+    setTimeout(() => { el.classList.add('exit'); setTimeout(() => el.remove(), 350); }, 4000);
+    // ограничим стек
+    while (stack.children.length > 5) stack.firstChild.remove();
+};
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>

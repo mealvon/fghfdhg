@@ -2,208 +2,614 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
-<title>Админ-панель</title>
+<title>Админ-панель Majestic</title>
 <link rel="stylesheet" href="../shared/theme.css" />
 <style>
 body {
-    background: rgba(5, 10, 24, 0.78);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background:
+        radial-gradient(ellipse at top, rgba(212,175,55,.06), transparent 50%),
+        rgba(4, 6, 13, 0.78);
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(6px);
 }
 .panel {
-    width: 1080px;
-    height: 660px;
+    width: 1280px;
+    height: 760px;
     display: grid;
-    grid-template-columns: 260px 1fr;
+    grid-template-columns: 280px 1fr;
+    border-radius: 8px;
     overflow: hidden;
+    position: relative;
+    animation: panelIn .35s cubic-bezier(.2,.9,.3,1.05) both;
 }
+@keyframes panelIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+
+/* ───── Sidebar ───── */
 .sidebar {
-    background: linear-gradient(180deg, #0d1d3d, #0a1428);
+    background: linear-gradient(180deg, #0c1530 0%, #050a1c 100%);
     border-right: 1px solid var(--border);
-    padding: 22px 16px;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
 }
-.sidebar h1 {
-    font-family: 'Cinzel', 'Georgia', serif;
-    color: var(--gold-bright);
-    font-size: 22px;
-    letter-spacing: 4px;
+.brand {
+    padding: 26px 24px 22px;
     text-align: center;
-    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+    background: radial-gradient(ellipse at top, rgba(212,175,55,.12), transparent 70%);
 }
-.sidebar .sub { color: var(--text-muted); font-size: 11px; text-align: center; letter-spacing: 2px; margin-bottom: 24px; }
-.menu { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.brand .crown { margin-bottom: 4px; }
+.brand h1 {
+    font-family: 'Cinzel', 'Georgia', serif;
+    font-size: 24px;
+    background: linear-gradient(180deg, #fff8d6, var(--gold-1) 40%, var(--gold-2) 80%, var(--gold-3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 6px;
+    font-weight: 700;
+    margin-left: 4px;
+}
+.brand .sub {
+    color: var(--text-mute);
+    font-size: 10px;
+    letter-spacing: 4px;
+    margin-top: 4px;
+    text-transform: uppercase;
+}
+
+.menu { flex: 1; padding: 16px 12px; overflow-y: auto; }
+.menu .group-title {
+    color: var(--text-mute);
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 12px 14px 6px;
+    font-weight: 700;
+}
 .menu .item {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%;
     background: none;
     border: 1px solid transparent;
-    color: var(--text-muted);
+    color: var(--text-dim);
     text-align: left;
-    padding: 10px 12px;
-    border-radius: 6px;
+    padding: 11px 14px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 2px;
+    transition: all .15s;
 }
-.menu .item:hover { background: rgba(255,255,255,.04); color: var(--text); }
+.menu .item:hover {
+    background: rgba(255,255,255,.03);
+    color: var(--text);
+}
 .menu .item.active {
-    background: rgba(212,175,55,.12);
-    color: var(--gold-bright);
-    border-color: var(--border);
+    background: linear-gradient(90deg, rgba(212,175,55,.18), rgba(212,175,55,.04));
+    color: var(--gold-1);
+    border-color: var(--border-strong);
+    box-shadow: inset 3px 0 0 var(--gold-2);
 }
-.me {
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-    color: var(--text-muted);
-    font-size: 12px;
+.menu .item .icon {
+    width: 18px; height: 18px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: currentColor;
+    opacity: 0.85;
+    font-size: 14px;
 }
-.me strong { color: var(--gold-bright); }
+.menu .item .badge {
+    margin-left: auto;
+    background: var(--danger);
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 8px;
+    font-weight: 700;
+}
 
-.main { padding: 22px 26px; overflow: hidden; display: flex; flex-direction: column; }
-.main h2 { font-family: 'Cinzel', serif; color: var(--gold-bright); letter-spacing: 3px; font-size: 18px; margin-bottom: 14px; }
-.toolbar { display: flex; gap: 8px; margin-bottom: 14px; }
+.me-card {
+    border-top: 1px solid var(--border);
+    padding: 16px 20px;
+    background: rgba(0,0,0,.3);
+}
+.me-card .row1 {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px;
+}
+.me-card .avatar {
+    width: 36px; height: 36px;
+    background: linear-gradient(180deg, var(--gold-1), var(--gold-3));
+    color: #1a1408;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 16px;
+}
+.me-card .login { font-weight: 600; color: var(--text); font-size: 13px; }
+.me-card .role  { font-size: 10px; color: var(--gold-1); letter-spacing: 2px; text-transform: uppercase; }
+
+/* ───── Main ───── */
+.main {
+    background:
+        radial-gradient(ellipse at top right, rgba(59,130,246,.04), transparent 40%),
+        linear-gradient(180deg, #060a18 0%, #04060d 100%);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+.topbar {
+    padding: 22px 30px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(4,6,13,.5);
+}
+.topbar h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    color: var(--gold-1);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+.topbar .actions { display: flex; gap: 8px; }
+
+.content { flex: 1; padding: 22px 30px; overflow: hidden; display: flex; flex-direction: column; }
+.view { display: none; flex: 1; overflow: hidden; flex-direction: column; }
+.view.active { display: flex; }
+
+/* ───── Toolbar / Search ───── */
+.toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
 .toolbar .m-input { flex: 1; }
 
-.list { flex: 1; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; }
-.list table { width: 100%; border-collapse: collapse; }
-.list th, .list td { padding: 10px 12px; text-align: left; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,.04); }
-.list th { background: rgba(0,0,0,.3); color: var(--text-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
-.list tr:hover td { background: rgba(255,255,255,.025); }
-.list tr.selected td { background: rgba(212,175,55,.08); }
-.list .lvl {
+/* ───── Table / List ───── */
+.table-wrap { flex: 1; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; background: rgba(0,0,0,.25); }
+table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.tbl thead { position: sticky; top: 0; z-index: 1; }
+table.tbl th {
+    background: linear-gradient(180deg, #0c1430, #060a18);
+    color: var(--gold-2);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+}
+table.tbl td {
+    padding: 11px 14px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    color: var(--text-dim);
+}
+table.tbl tr { transition: background .12s; cursor: pointer; }
+table.tbl tr:hover td { background: rgba(212,175,55,.04); color: var(--text); }
+table.tbl tr.selected td {
+    background: linear-gradient(90deg, rgba(212,175,55,.18), rgba(212,175,55,.06));
+    color: var(--gold-1);
+    box-shadow: inset 3px 0 0 var(--gold-2);
+}
+
+.id-pill {
     display: inline-block;
-    padding: 2px 6px;
-    border-radius: 3px;
+    background: rgba(255,255,255,.08);
+    color: var(--text-dim);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    background: linear-gradient(90deg, #f1c948, #d4af37);
-    color: #111;
     font-weight: 600;
 }
-.list .lvl0 { background: rgba(255,255,255,.08); color: var(--text-muted); }
+.lvl-pill {
+    display: inline-flex; align-items: center;
+    padding: 3px 9px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.lvl-pill.l0 { background: rgba(255,255,255,.08); color: var(--text-mute); }
+.lvl-pill.l1, .lvl-pill.l2 { background: rgba(59,130,246,.18); color: #93c5fd; }
+.lvl-pill.l3, .lvl-pill.l4 { background: rgba(168,85,247,.18); color: #c084fc; }
+.lvl-pill.l5, .lvl-pill.l6 { background: rgba(239,68,68,.18); color: #fca5a5; }
+.lvl-pill.l7 { background: linear-gradient(90deg, var(--gold-1), var(--gold-2)); color: #1a1408; box-shadow: 0 2px 6px var(--gold-glow); }
+
+.status-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.status-pill.open { background: rgba(239,68,68,.18); color: #fca5a5; }
+.status-pill.taken { background: rgba(212,175,55,.18); color: var(--gold-1); }
+.status-pill.closed { background: rgba(34,197,94,.18); color: #86efac; }
+
+.money-cell { color: var(--success); font-weight: 600; }
+.warn-cell { font-weight: 700; }
+.warn-cell.w1 { color: var(--warn); }
+.warn-cell.w2 { color: #f97316; }
+.warn-cell.w3 { color: var(--danger); }
 
 .actions-bar {
     margin-top: 14px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
     padding-top: 14px;
     border-top: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 6px;
 }
-.actions-bar .m-btn { padding: 8px 12px; font-size: 12px; }
 
-.close {
-    position: absolute;
-    top: 12px;
-    right: 16px;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 22px;
-    cursor: pointer;
+/* ───── Empty / Stats ───── */
+.empty {
+    text-align: center;
+    color: var(--text-mute);
+    padding: 80px 20px;
+    font-style: italic;
 }
-.close:hover { color: var(--danger); }
-
-.empty { text-align: center; color: var(--text-muted); padding: 60px 20px; font-style: italic; }
-
-dialog.modal {
-    background: var(--bg-card);
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 22px;
+}
+.stat {
+    background: rgba(0,0,0,.35);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 22px;
-    width: 360px;
+    border-radius: 6px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
 }
-dialog.modal::backdrop { background: rgba(0,0,0,.6); }
-dialog.modal h3 { color: var(--gold-bright); margin-bottom: 14px; font-family: 'Cinzel', serif; letter-spacing: 2px; }
-dialog.modal .m-input { margin-bottom: 12px; }
-dialog.modal .row { display: flex; gap: 8px; justify-content: flex-end; }
+.stat::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--gold-1), var(--gold-3));
+}
+.stat .label { color: var(--text-mute); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.stat .val { font-family: 'Cinzel', serif; font-size: 28px; color: var(--gold-1); font-weight: 700; }
+.stat .delta { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+/* ───── Close button ───── */
+.close {
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all .15s;
+}
+.close:hover { background: rgba(239,68,68,.18); color: var(--danger); border-color: var(--danger); }
+
+/* ───── Dialog ───── */
+dialog.modal {
+    background: var(--bg-card-strong);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 26px 28px;
+    width: 420px;
+    box-shadow: 0 30px 90px rgba(0,0,0,.8);
+}
+dialog.modal::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(6px); }
+dialog.modal h3 {
+    font-family: 'Cinzel', serif;
+    color: var(--gold-1);
+    margin-bottom: 16px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+dialog.modal .field { margin-bottom: 14px; }
+dialog.modal label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-mute);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+dialog.modal .row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+/* ───── Quick spawn grid ───── */
+.veh-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 18px;
+}
+.veh-card {
+    background: linear-gradient(180deg, rgba(15,23,52,.85), rgba(10,16,36,.85));
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all .15s;
+}
+.veh-card:hover {
+    border-color: var(--gold-2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(212,175,55,.2);
+}
+.veh-card .name { color: var(--gold-1); font-weight: 700; font-size: 13px; letter-spacing: 1px; }
+.veh-card .model { color: var(--text-mute); font-size: 10px; font-family: monospace; margin-top: 4px; }
+
+/* ───── Logs ───── */
+.log-row {
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    font-size: 12px;
+    color: var(--text-dim);
+    display: grid;
+    grid-template-columns: 130px 110px 1fr;
+    gap: 14px;
+    align-items: center;
+}
+.log-row .time { color: var(--text-mute); font-family: monospace; font-size: 11px; }
+.log-row .type {
+    display: inline-block; font-weight: 700; font-size: 10px;
+    padding: 2px 8px; border-radius: 3px; letter-spacing: 1px; text-transform: uppercase;
+    background: rgba(59,130,246,.15); color: #93c5fd;
+}
+.log-row .type.kick, .log-row .type.ban { background: rgba(239,68,68,.15); color: #fca5a5; }
+.log-row .type.mute, .log-row .type.warn { background: rgba(250,204,21,.15); color: #fde047; }
+.log-row .type.unban, .log-row .type.giveMoney { background: rgba(34,197,94,.15); color: #86efac; }
+
+/* ───── Reports ───── */
+.report-card {
+    background: linear-gradient(180deg, rgba(15,23,52,.85), rgba(10,16,36,.85));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--danger);
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+}
+.report-card.taken { border-left-color: var(--gold-2); }
+.report-card.closed { border-left-color: var(--success); opacity: 0.7; }
+.report-card .head { display: flex; justify-content: space-between; margin-bottom: 6px; align-items: center; }
+.report-card .from { font-weight: 700; color: var(--gold-1); }
+.report-card .text { color: var(--text); line-height: 1.5; margin-top: 6px; }
+.report-card .meta { color: var(--text-mute); font-size: 11px; margin-top: 6px; }
+.report-card .actions { margin-top: 10px; display: flex; gap: 6px; }
+
+/* ───── Teleports ───── */
+.tp-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+.tp-card {
+    background: linear-gradient(180deg, rgba(15,23,52,.85), rgba(10,16,36,.85));
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all .15s;
+}
+.tp-card:hover {
+    border-color: var(--gold-2);
+    background: linear-gradient(90deg, rgba(212,175,55,.1), rgba(15,23,52,.85));
+}
+.tp-card .name { color: var(--gold-1); font-weight: 600; letter-spacing: 1px; }
+.tp-card .coords { color: var(--text-mute); font-size: 11px; font-family: monospace; }
 </style>
 </head>
 <body>
-    <div class="panel m-card" style="position:relative">
-        <button class="close" onclick="closePanel()">×</button>
+    <div class="panel m-card">
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <h1>MAJESTIC</h1>
-            <div class="sub">ADMIN PANEL</div>
-            <div class="menu">
-                <button class="item active" data-view="players">Игроки</button>
-                <button class="item" data-view="vehicles">Транспорт</button>
-                <button class="item" data-view="info">О сервере</button>
+            <div class="brand">
+                <div class="crown"></div>
+                <h1>MAJESTIC</h1>
+                <div class="sub">ADMIN CONSOLE</div>
             </div>
-            <div class="me">
-                <div>Вы: <strong id="meLogin">—</strong></div>
-                <div>Уровень: <strong id="meLevel">0</strong></div>
+
+            <nav class="menu" id="menu">
+                <div class="group-title">УПРАВЛЕНИЕ</div>
+                <button class="item active" data-view="dashboard"><span class="icon">⌂</span> Обзор</button>
+                <button class="item" data-view="players"><span class="icon">⚇</span> Игроки <span class="badge" id="playersBadge">0</span></button>
+                <button class="item" data-view="reports"><span class="icon">!</span> Репорты <span class="badge" id="reportsBadge" style="display:none">0</span></button>
+
+                <div class="group-title">НАКАЗАНИЯ</div>
+                <button class="item" data-view="punishments"><span class="icon">⚖</span> История</button>
+                <button class="item" data-view="bans"><span class="icon">⛔</span> Баны</button>
+
+                <div class="group-title">МИР</div>
+                <button class="item" data-view="vehicles"><span class="icon">⚙</span> Транспорт</button>
+                <button class="item" data-view="teleports"><span class="icon">⌖</span> Телепорты</button>
+
+                <div class="group-title">СИСТЕМА</div>
+                <button class="item" data-view="logs"><span class="icon">≡</span> Логи</button>
+                <button class="item" data-view="info"><span class="icon">i</span> Сервер</button>
+            </nav>
+
+            <div class="me-card">
+                <div class="row1">
+                    <div class="avatar" id="meAvatar">A</div>
+                    <div>
+                        <div class="login" id="meLogin">—</div>
+                        <div class="role" id="meRole">— уровень 0 —</div>
+                    </div>
+                </div>
             </div>
         </aside>
 
+        <!-- Main -->
         <main class="main">
-            <div id="viewPlayers">
-                <h2>Список игроков</h2>
-                <div class="toolbar">
-                    <input id="search" class="m-input" placeholder="Поиск по логину или ID" />
-                    <button class="m-btn secondary" onclick="refresh()">Обновить</button>
-                </div>
-                <div class="list">
-                    <table>
-                        <thead><tr>
-                            <th>ID</th><th>Логин</th><th>Деньги</th><th>HP</th><th>Ping</th><th>Админ</th>
-                        </tr></thead>
-                        <tbody id="playersBody"></tbody>
-                    </table>
-                </div>
-                <div class="actions-bar">
-                    <button class="m-btn" onclick="act('tp')">Телепорт к</button>
-                    <button class="m-btn" onclick="act('bring')">Притянуть</button>
-                    <button class="m-btn" onclick="act('heal')">Лечить</button>
-                    <button class="m-btn" onclick="act('armor')">Броня</button>
-                    <button class="m-btn secondary" onclick="ask('mute','Минут мута:','5')">Мут</button>
-                    <button class="m-btn secondary" onclick="ask('giveMoney','Сумма:','1000')">Выдать $</button>
-                    <button class="m-btn secondary" onclick="ask('setAdmin','Уровень (0-7):','1')">Уровень админа</button>
-                    <button class="m-btn danger" onclick="ask('kick','Причина:','')">Кик</button>
-                    <button class="m-btn danger" onclick="ask('ban','Причина:','')">Бан</button>
+            <div class="topbar">
+                <h2 id="viewTitle">Обзор</h2>
+                <div class="actions">
+                    <button class="m-btn ghost small" onclick="refresh()">Обновить</button>
+                    <button class="close" onclick="closePanel()">×</button>
                 </div>
             </div>
 
-            <div id="viewVehicles" style="display:none">
-                <h2>Спавн транспорта</h2>
-                <div class="toolbar">
-                    <input id="vehModel" class="m-input" placeholder="Модель (например: sultanrs, t20, zentorno)" />
-                    <button class="m-btn" onclick="spawnVeh()">Заспавнить</button>
-                </div>
-                <p style="color:var(--text-muted); margin-top: 12px; font-size: 12px;">Транспорт появится рядом с вами.</p>
-            </div>
+            <div class="content">
+                <!-- DASHBOARD -->
+                <section class="view active" id="vDashboard">
+                    <div class="stat-grid">
+                        <div class="stat"><div class="label">Онлайн</div><div class="val" id="sOnline">0</div><div class="delta">из 100 слотов</div></div>
+                        <div class="stat"><div class="label">Открытых репортов</div><div class="val" id="sReports">0</div><div class="delta">требуют внимания</div></div>
+                        <div class="stat"><div class="label">Активных банов</div><div class="val" id="sBans">0</div><div class="delta">в базе</div></div>
+                        <div class="stat"><div class="label">Ваш уровень</div><div class="val" id="sLevel">0</div><div class="delta" id="sLevelName">—</div></div>
+                    </div>
+                    <div class="m-divider" style="margin-bottom: 18px;">ПОСЛЕДНИЕ СОБЫТИЯ</div>
+                    <div class="table-wrap" id="recentLogs"></div>
+                </section>
 
-            <div id="viewInfo" style="display:none">
-                <h2>О сервере</h2>
-                <p style="color:var(--text-muted); line-height: 1.7;">
-                    Это стартовый шаблон сервера в стиле <strong style="color:var(--gold-bright)">Majestic</strong>
-                    на платформе RAGE:MP.<br/><br/>
-                    Все настройки находятся в <code>packages/majestic/config.js</code>.<br/>
-                    Сейвы игроков — в <code>data/players.json</code>.<br/><br/>
-                    Закрытие админ-панели: F2 или кнопка «×».
-                </p>
+                <!-- PLAYERS -->
+                <section class="view" id="vPlayers">
+                    <div class="toolbar">
+                        <input id="searchPlayers" class="m-input" placeholder="Поиск по ID или логину..." />
+                    </div>
+                    <div class="table-wrap">
+                        <table class="tbl">
+                            <thead><tr>
+                                <th>ID</th><th>Логин</th><th>Деньги</th><th>Банк</th>
+                                <th>HP</th><th>Броня</th><th>Варны</th><th>Ping</th><th>Уровень</th>
+                            </tr></thead>
+                            <tbody id="playersBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="actions-bar">
+                        <button class="m-btn ghost small" onclick="act('tp')">⟶ Телепорт к</button>
+                        <button class="m-btn ghost small" onclick="act('bring')">⟵ Притянуть</button>
+                        <button class="m-btn ghost small" onclick="act('spectate')">◉ Спектейт</button>
+                        <button class="m-btn ghost small" onclick="act('heal')">+ Лечить</button>
+                        <button class="m-btn ghost small" onclick="act('armor')">⚊ Броня</button>
+                        <button class="m-btn ghost small" onclick="ask('warn','Причина предупреждения','')">⚠ Варн</button>
+                        <button class="m-btn ghost small" onclick="ask('mute','Минут мута','5')">🕪 Мут</button>
+                        <button class="m-btn ghost small" onclick="ask('giveMoney','Сумма (можно отрицательную)','1000')">$ Деньги</button>
+                        <button class="m-btn ghost small" onclick="ask('setAdmin','Уровень админа (0-7)','1')">★ Админ-уровень</button>
+                        <button class="m-btn danger small" onclick="ask('kick','Причина кика','')">Кик</button>
+                        <button class="m-btn danger small" onclick="ask('ban','Причина бана','')">Бан</button>
+                    </div>
+                </section>
+
+                <!-- REPORTS -->
+                <section class="view" id="vReports">
+                    <div class="toolbar">
+                        <input id="searchReports" class="m-input" placeholder="Поиск по тексту репорта..." />
+                    </div>
+                    <div class="table-wrap" id="reportsList" style="padding: 14px;"></div>
+                </section>
+
+                <!-- PUNISHMENTS -->
+                <section class="view" id="vPunishments">
+                    <div class="table-wrap">
+                        <table class="tbl">
+                            <thead><tr><th>Время</th><th>Тип</th><th>Игрок</th><th>Админ</th><th>Причина</th></tr></thead>
+                            <tbody id="punishmentsBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- BANS -->
+                <section class="view" id="vBans">
+                    <div class="table-wrap">
+                        <table class="tbl">
+                            <thead><tr><th>Логин</th><th>Кем</th><th>Когда</th><th>Причина</th><th></th></tr></thead>
+                            <tbody id="bansBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- VEHICLES -->
+                <section class="view" id="vVehicles">
+                    <div class="toolbar">
+                        <input id="vehModel" class="m-input" placeholder="Введите модель (sultanrs, t20, zentorno, adder)" />
+                        <button class="m-btn" onclick="spawnVehManual()">Заспавнить</button>
+                    </div>
+                    <div class="m-divider" style="margin: 10px 0;">БЫСТРЫЙ СПАВН</div>
+                    <div class="veh-grid">
+                        <div class="veh-card" onclick="quickSpawn('zentorno')"><div class="name">Zentorno</div><div class="model">zentorno</div></div>
+                        <div class="veh-card" onclick="quickSpawn('t20')"><div class="name">T20</div><div class="model">t20</div></div>
+                        <div class="veh-card" onclick="quickSpawn('adder')"><div class="name">Adder</div><div class="model">adder</div></div>
+                        <div class="veh-card" onclick="quickSpawn('sultanrs')"><div class="name">Sultan RS</div><div class="model">sultanrs</div></div>
+                        <div class="veh-card" onclick="quickSpawn('elegy2')"><div class="name">Elegy RH8</div><div class="model">elegy2</div></div>
+                        <div class="veh-card" onclick="quickSpawn('jester')"><div class="name">Jester</div><div class="model">jester</div></div>
+                        <div class="veh-card" onclick="quickSpawn('feltzer2')"><div class="name">Feltzer</div><div class="model">feltzer2</div></div>
+                        <div class="veh-card" onclick="quickSpawn('comet2')"><div class="name">Comet</div><div class="model">comet2</div></div>
+                        <div class="veh-card" onclick="quickSpawn('police')"><div class="name">LSPD</div><div class="model">police</div></div>
+                        <div class="veh-card" onclick="quickSpawn('ambulance')"><div class="name">Ambulance</div><div class="model">ambulance</div></div>
+                        <div class="veh-card" onclick="quickSpawn('akuma')"><div class="name">Akuma</div><div class="model">akuma</div></div>
+                        <div class="veh-card" onclick="quickSpawn('buzzard2')"><div class="name">Buzzard</div><div class="model">buzzard2</div></div>
+                    </div>
+                </section>
+
+                <!-- TELEPORTS -->
+                <section class="view" id="vTeleports">
+                    <div class="m-divider" style="margin-bottom: 14px;">БЫСТРЫЕ ТОЧКИ</div>
+                    <div class="tp-grid" id="teleportsList"></div>
+                </section>
+
+                <!-- LOGS -->
+                <section class="view" id="vLogs">
+                    <div class="table-wrap" id="logsList"></div>
+                </section>
+
+                <!-- INFO -->
+                <section class="view" id="vInfo">
+                    <div class="stat-grid">
+                        <div class="stat"><div class="label">Платформа</div><div class="val" style="font-size: 18px">RAGE:MP</div></div>
+                        <div class="stat"><div class="label">Версия панели</div><div class="val" style="font-size: 18px">v0.2</div></div>
+                        <div class="stat"><div class="label">Режим</div><div class="val" style="font-size: 18px">LOCAL</div></div>
+                        <div class="stat"><div class="label">Порт</div><div class="val" style="font-size: 18px">22005</div></div>
+                    </div>
+                    <p style="color: var(--text-dim); line-height: 1.8; max-width: 700px;">
+                        Это стартовый шаблон сервера в стиле <span style="color: var(--gold-1); font-family: Cinzel, serif; letter-spacing: 2px;">MAJESTIC ROLEPLAY</span>
+                        для локального запуска. Платформа — RAGE Multiplayer.<br/><br/>
+                        <strong style="color: var(--gold-2);">Настройки:</strong> <code>packages/majestic/config.js</code><br/>
+                        <strong style="color: var(--gold-2);">База игроков:</strong> <code>data/players.json</code><br/>
+                        <strong style="color: var(--gold-2);">Логи:</strong> <code>data/logs.json</code><br/><br/>
+                        <span style="color: var(--text-mute); font-size: 12px;">Закрытие админ-панели: F2 / Esc / кнопка ×</span>
+                    </p>
+                </section>
             </div>
         </main>
     </div>
 
     <dialog id="askDialog" class="modal">
         <h3 id="askTitle">Параметр</h3>
-        <input id="askValue" class="m-input" />
+        <div class="field">
+            <label id="askLabel">Значение</label>
+            <input id="askValue" class="m-input" />
+        </div>
         <div class="row">
-            <button class="m-btn secondary" onclick="closeAsk(false)">Отмена</button>
-            <button class="m-btn" onclick="closeAsk(true)">OK</button>
+            <button class="m-btn ghost" onclick="closeAsk(false)">Отмена</button>
+            <button class="m-btn" onclick="closeAsk(true)">Применить</button>
         </div>
     </dialog>
 
 <script>
-let data = { self: { login: '—', level: 0 }, players: [] };
+const VIEW_TITLES = {
+    dashboard: 'Обзор',
+    players: 'Игроки',
+    reports: 'Репорты',
+    punishments: 'История наказаний',
+    bans: 'Активные баны',
+    vehicles: 'Транспорт',
+    teleports: 'Телепорты',
+    logs: 'Системные логи',
+    info: 'О сервере'
+};
+const ROLE_NAMES = { 0: 'Игрок', 1: 'Помощник', 2: 'Модератор', 3: 'Гл.модератор', 4: 'Администратор', 5: 'Гл.администратор', 6: 'Куратор', 7: 'Владелец' };
+
+let data = { self: { login: '—', level: 0 }, players: [], reports: [], punishments: [], logs: [], bans: [], teleports: [] };
 let selectedId = null;
 let pendingAction = null;
 
 function trigger(ev, ...args) {
     if (typeof mp !== 'undefined' && mp.trigger) mp.trigger(ev, ...args);
 }
-
 function closePanel() { trigger('majestic:cef:admin:close'); }
 function refresh() { trigger('majestic:cef:admin:refresh'); }
 
@@ -211,96 +617,259 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape' || e.key === 'F2') closePanel();
 });
 
+// Menu switching
 document.querySelectorAll('.menu .item').forEach(b => {
     b.addEventListener('click', () => {
         document.querySelectorAll('.menu .item').forEach(x => x.classList.remove('active'));
         b.classList.add('active');
-        ['players','vehicles','info'].forEach(v =>
-            document.getElementById('view' + cap(v)).style.display = (v === b.dataset.view ? 'block' : 'none')
-        );
+        const v = b.dataset.view;
+        document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+        document.getElementById('v' + cap(v)).classList.add('active');
+        document.getElementById('viewTitle').textContent = VIEW_TITLES[v] || v;
     });
 });
 function cap(s) { return s[0].toUpperCase() + s.slice(1); }
 
-document.getElementById('search').addEventListener('input', renderPlayers);
+document.getElementById('searchPlayers').addEventListener('input', renderPlayers);
+document.getElementById('searchReports').addEventListener('input', renderReports);
 
+// Главная точка получения данных
 window.renderAdmin = (payload) => {
     data = payload;
-    document.getElementById('meLogin').textContent = data.self.login;
-    document.getElementById('meLevel').textContent = data.self.level;
+    renderHeader();
+    renderDashboard();
     renderPlayers();
+    renderReports();
+    renderPunishments();
+    renderBans();
+    renderLogs();
+    renderTeleports();
+    updateBadges();
 };
 
+function renderHeader() {
+    document.getElementById('meLogin').textContent = data.self.login;
+    document.getElementById('meRole').textContent = `${ROLE_NAMES[data.self.level] || 'Игрок'} • уровень ${data.self.level}`;
+    document.getElementById('meAvatar').textContent = (data.self.login || 'A').charAt(0).toUpperCase();
+}
+
+function updateBadges() {
+    document.getElementById('playersBadge').textContent = data.players.length;
+    const open = (data.reports || []).filter(r => r.status !== 'closed').length;
+    const b = document.getElementById('reportsBadge');
+    b.textContent = open;
+    b.style.display = open > 0 ? 'inline-block' : 'none';
+}
+
+function renderDashboard() {
+    document.getElementById('sOnline').textContent = data.players.length;
+    document.getElementById('sReports').textContent = (data.reports || []).filter(r => r.status !== 'closed').length;
+    document.getElementById('sBans').textContent = (data.bans || []).length;
+    document.getElementById('sLevel').textContent = data.self.level;
+    document.getElementById('sLevelName').textContent = ROLE_NAMES[data.self.level] || '—';
+
+    const recent = (data.logs || []).slice(0, 10);
+    const box = document.getElementById('recentLogs');
+    if (!recent.length) {
+        box.innerHTML = '<div class="empty">Логов пока нет</div>';
+        return;
+    }
+    box.innerHTML = recent.map(logRow).join('');
+}
+
 function renderPlayers() {
-    const q = document.getElementById('search').value.trim().toLowerCase();
+    const q = document.getElementById('searchPlayers').value.trim().toLowerCase();
     const body = document.getElementById('playersBody');
-    body.innerHTML = '';
     const list = data.players.filter(p =>
         !q || String(p.id) === q || p.login.toLowerCase().includes(q)
     );
     if (!list.length) {
-        body.innerHTML = '<tr><td colspan="6" class="empty">Никого нет</td></tr>';
+        body.innerHTML = '<tr><td colspan="9" class="empty">Никого нет онлайн</td></tr>';
         return;
     }
-    for (const p of list) {
-        const tr = document.createElement('tr');
-        if (p.id === selectedId) tr.classList.add('selected');
-        tr.innerHTML = `
-            <td>${p.id}</td>
-            <td>${escapeHtml(p.login)}</td>
-            <td>$${Number(p.money||0).toLocaleString('ru-RU')}</td>
+    body.innerHTML = list.map(p => `
+        <tr class="${p.id === selectedId ? 'selected' : ''}" data-id="${p.id}">
+            <td><span class="id-pill">${p.id}</span></td>
+            <td><strong style="color:var(--text)">${esc(p.login)}</strong></td>
+            <td class="money-cell">$${formatN(p.money||0)}</td>
+            <td class="money-cell">$${formatN(p.bank||0)}</td>
             <td>${p.health}</td>
+            <td>${p.armor}</td>
+            <td class="warn-cell w${Math.min(3, p.warns||0)}">${p.warns||0}/3</td>
             <td>${p.ping}</td>
-            <td><span class="lvl lvl${p.adminLevel||0}">${p.adminLevel||0}</span></td>
-        `;
-        tr.addEventListener('click', () => { selectedId = p.id; renderPlayers(); });
-        body.appendChild(tr);
-    }
+            <td><span class="lvl-pill l${p.adminLevel||0}">${ROLE_NAMES[p.adminLevel||0] || '—'}</span></td>
+        </tr>`).join('');
+    body.querySelectorAll('tr').forEach(tr => {
+        tr.addEventListener('click', () => {
+            selectedId = parseInt(tr.dataset.id, 10);
+            renderPlayers();
+        });
+    });
 }
 
-function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-function act(action, arg) {
-    if (selectedId == null) {
-        flashMsg('Выберите игрока из списка.');
+function renderReports() {
+    const q = document.getElementById('searchReports').value.trim().toLowerCase();
+    const list = (data.reports || []).filter(r => !q || r.text.toLowerCase().includes(q) || (r.fromLogin||'').toLowerCase().includes(q));
+    const box = document.getElementById('reportsList');
+    if (!list.length) {
+        box.innerHTML = '<div class="empty">Активных репортов нет</div>';
         return;
     }
-    trigger('majestic:cef:admin:action', action, selectedId, arg || '');
-    setTimeout(refresh, 300);
+    box.innerHTML = list.map(r => `
+        <div class="report-card ${r.status}">
+            <div class="head">
+                <span class="from">#${r.id} · ${esc(r.fromLogin)}</span>
+                <span class="status-pill ${r.status}">${r.status === 'open' ? 'Открыт' : r.status === 'taken' ? 'Взят' : 'Закрыт'}</span>
+            </div>
+            <div class="text">${esc(r.text)}</div>
+            <div class="meta">${formatTime(r.at)}${r.takenBy ? ' · взял: ' + esc(r.takenBy) : ''}</div>
+            ${r.status !== 'closed' ? `<div class="actions">
+                <button class="m-btn ghost small" onclick="reportAction(${r.id}, 'report:take')">Взять</button>
+                <button class="m-btn ghost small" onclick="reportReply(${r.id})">Ответить</button>
+                <button class="m-btn danger small" onclick="reportAction(${r.id}, 'report:close')">Закрыть</button>
+            </div>` : ''}
+        </div>`).join('');
 }
 
+function reportAction(id, action) {
+    trigger('majestic:cef:admin:action', action, id, '');
+    setTimeout(refresh, 200);
+}
+function reportReply(id) {
+    pendingAction = 'report:reply';
+    pendingActionTarget = id;
+    document.getElementById('askTitle').textContent = 'Ответ на репорт #' + id;
+    document.getElementById('askLabel').textContent = 'Текст ответа';
+    document.getElementById('askValue').value = '';
+    document.getElementById('askDialog').showModal();
+    setTimeout(() => document.getElementById('askValue').focus(), 50);
+}
+let pendingActionTarget = null;
+
+function renderPunishments() {
+    const body = document.getElementById('punishmentsBody');
+    const list = data.punishments || [];
+    if (!list.length) {
+        body.innerHTML = '<tr><td colspan="5" class="empty">Истории наказаний нет</td></tr>';
+        return;
+    }
+    body.innerHTML = list.map(p => `
+        <tr>
+            <td>${formatTime(p.at)}</td>
+            <td><span class="status-pill ${punishStyle(p.type)}">${punishLabel(p.type)}</span></td>
+            <td><strong style="color:var(--text)">${esc(p.target)}</strong></td>
+            <td>${esc(p.by)}</td>
+            <td>${esc(p.reason || '—')}</td>
+        </tr>`).join('');
+}
+function punishLabel(t) { return { kick:'Кик', ban:'Бан', mute:'Мут', warn:'Варн', giveMoney:'Деньги', setAdmin:'Уровень' }[t] || t; }
+function punishStyle(t) { return ['kick','ban'].includes(t) ? 'open' : ['mute','warn'].includes(t) ? 'taken' : 'closed'; }
+
+function renderBans() {
+    const body = document.getElementById('bansBody');
+    const list = data.bans || [];
+    if (!list.length) {
+        body.innerHTML = '<tr><td colspan="5" class="empty">Активных банов нет</td></tr>';
+        return;
+    }
+    body.innerHTML = list.map(b => `
+        <tr>
+            <td><strong style="color:var(--text)">${esc(b.login)}</strong></td>
+            <td>${esc(b.by || '—')}</td>
+            <td>${formatTime(b.at)}</td>
+            <td>${esc(b.reason || '—')}</td>
+            <td><button class="m-btn ghost small" onclick="unban('${esc(b.login)}')">Разбанить</button></td>
+        </tr>`).join('');
+}
+function unban(login) {
+    trigger('majestic:cef:admin:action', 'unban', login, '');
+    setTimeout(refresh, 200);
+}
+
+function renderLogs() {
+    const box = document.getElementById('logsList');
+    const list = data.logs || [];
+    if (!list.length) {
+        box.innerHTML = '<div class="empty">Логов нет</div>';
+        return;
+    }
+    box.innerHTML = list.map(logRow).join('');
+}
+function logRow(l) {
+    const summary = l.target ? `${l.target}${l.by ? ' ← ' + l.by : ''}${l.reason ? ' — ' + l.reason : ''}` :
+                    l.login ? l.login : l.text ? l.text : '—';
+    return `<div class="log-row">
+        <span class="time">${formatTime(l.at)}</span>
+        <span><span class="type ${l.type.split(':')[0]}">${esc(l.type)}</span></span>
+        <span>${esc(summary)}</span>
+    </div>`;
+}
+
+function renderTeleports() {
+    const box = document.getElementById('teleportsList');
+    box.innerHTML = (data.teleports || []).map(t => `
+        <div class="tp-card" onclick='tpTo(${JSON.stringify(t.pos)})'>
+            <div>
+                <div class="name">${esc(t.name)}</div>
+                <div class="coords">${t.pos.map(n => n.toFixed(1)).join(', ')}</div>
+            </div>
+            <div style="color: var(--gold-2); font-size: 18px;">⌖</div>
+        </div>`).join('');
+}
+function tpTo(pos) {
+    trigger('majestic:cef:admin:action', 'tpXYZ', 0, pos.join(','));
+    flashMsg('Телепортируем...');
+}
+
+function act(action) {
+    if (selectedId == null) { flashMsg('Выберите игрока из списка'); return; }
+    trigger('majestic:cef:admin:action', action, selectedId, '');
+    setTimeout(refresh, 200);
+}
 function ask(action, title, def) {
-    if (selectedId == null && action !== 'spawnVeh') {
-        flashMsg('Выберите игрока из списка.');
-        return;
-    }
+    if (selectedId == null) { flashMsg('Выберите игрока из списка'); return; }
     pendingAction = action;
+    pendingActionTarget = selectedId;
     document.getElementById('askTitle').textContent = title;
+    document.getElementById('askLabel').textContent = 'Значение';
     const inp = document.getElementById('askValue');
     inp.value = def || '';
     document.getElementById('askDialog').showModal();
     setTimeout(() => inp.focus(), 50);
 }
-
 function closeAsk(ok) {
     document.getElementById('askDialog').close();
     if (!ok || !pendingAction) return;
     const val = document.getElementById('askValue').value;
-    act(pendingAction, val);
+    trigger('majestic:cef:admin:action', pendingAction, pendingActionTarget, val);
+    setTimeout(refresh, 200);
     pendingAction = null;
+    pendingActionTarget = null;
 }
 
-function spawnVeh() {
-    const model = document.getElementById('vehModel').value.trim() || 'sultanrs';
+function spawnVehManual() {
+    const m = document.getElementById('vehModel').value.trim();
+    if (!m) return flashMsg('Введите модель');
+    trigger('majestic:cef:admin:action', 'spawnVeh', 0, m);
+}
+function quickSpawn(model) {
     trigger('majestic:cef:admin:action', 'spawnVeh', 0, model);
+    flashMsg('Спавн: ' + model);
+}
+
+// Утилиты
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function formatN(n) { return (Number(n)||0).toLocaleString('ru-RU'); }
+function formatTime(ts) {
+    if (!ts) return '—';
+    const d = new Date(ts);
+    return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 
 function flashMsg(text) {
     const m = document.createElement('div');
     m.textContent = text;
-    m.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1a2a4a;border:1px solid var(--border);color:#fff;padding:10px 18px;border-radius:6px;z-index:9999;';
+    m.style.cssText = 'position:fixed;top:30px;left:50%;transform:translateX(-50%);background:linear-gradient(180deg,#0c1530,#060a18);border:1px solid var(--border-strong);color:var(--gold-1);padding:12px 22px;border-radius:4px;z-index:9999;font-size:13px;letter-spacing:1px;box-shadow:0 8px 24px rgba(0,0,0,.7);';
     document.body.appendChild(m);
     setTimeout(() => m.remove(), 1800);
 }

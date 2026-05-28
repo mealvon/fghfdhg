@@ -6,82 +6,283 @@
 <link rel="stylesheet" href="../shared/theme.css" />
 <style>
 body { background: transparent; pointer-events: none; }
-.hud {
-    position: absolute;
-    top: 20px;
-    right: 24px;
-    width: 240px;
-    padding: 14px 16px;
-    background: linear-gradient(180deg, rgba(16,36,72,.92), rgba(10,20,40,.92));
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.5);
-}
-.hud .row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
-.hud .label { color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
-.hud .value { color: var(--gold-bright); font-weight: 700; font-size: 16px; font-family: 'Cinzel', 'Georgia', serif; }
-.hud .name {
-    text-align: center;
-    color: var(--gold-bright);
+
+/* ───── Верхний правый блок: деньги + банк + сервер ───── */
+.top-right {
+    position: fixed;
+    top: 22px; right: 28px;
+    text-align: right;
     font-family: 'Cinzel', 'Georgia', serif;
-    font-size: 18px;
-    letter-spacing: 2px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 6px;
 }
-.badge {
-    display: inline-block;
-    font-size: 10px;
-    background: linear-gradient(90deg, #f1c948, #d4af37);
-    color: #111;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
-    vertical-align: middle;
-}
-.hint {
-    position: absolute;
-    bottom: 20px;
-    left: 24px;
-    color: rgba(255,255,255,.45);
+.top-right .server {
     font-size: 11px;
-    background: rgba(0,0,0,.4);
-    padding: 6px 10px;
-    border-radius: 4px;
-    border: 1px solid rgba(255,255,255,.08);
+    color: var(--gold-2);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
 }
+.top-right .money {
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0,0,0,.85), 0 0 18px rgba(212,175,55,.35);
+    line-height: 1;
+}
+.top-right .money .currency { color: var(--success); font-size: 22px; margin-right: 4px; }
+.top-right .bank {
+    font-size: 14px;
+    color: var(--gold-1);
+    margin-top: 4px;
+    text-shadow: 0 2px 4px #000;
+}
+.top-right .bank .label { color: var(--text-mute); font-size: 10px; letter-spacing: 2px; margin-right: 6px; text-transform: uppercase; }
+.top-right .player {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-shadow: 0 1px 3px #000;
+    letter-spacing: 1px;
+}
+.top-right .player .admin-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--gold-1), var(--gold-2));
+    color: #1a1408;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 9px;
+    margin-left: 6px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    box-shadow: 0 2px 6px var(--gold-glow);
+}
+
+/* ───── Левый нижний блок: вертикальные шкалы (как Majestic) ───── */
+.stats {
+    position: fixed;
+    bottom: 28px;
+    left: 28px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}
+.bar-col {
+    width: 28px;
+    height: 110px;
+    background: rgba(0,0,0,.45);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,.5);
+}
+.bar-col .fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,.25), transparent 30%);
+    transition: height .4s cubic-bezier(.3,.9,.4,1);
+}
+.bar-col .fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--barColor, var(--success));
+    mix-blend-mode: normal;
+    z-index: -1;
+}
+.bar-col .ico {
+    position: absolute;
+    bottom: 8px; left: 50%;
+    transform: translateX(-50%);
+    width: 14px; height: 14px;
+    z-index: 2;
+    filter: drop-shadow(0 1px 2px #000);
+}
+.bar-col .pct {
+    position: absolute;
+    top: -22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: var(--text-dim);
+    font-weight: 600;
+    text-shadow: 0 1px 2px #000;
+}
+
+/* цвета конкретных шкал */
+.bar-col.hp .fill { background: linear-gradient(180deg, #ff6b6b, #b91c1c); }
+.bar-col.armor .fill { background: linear-gradient(180deg, #93c5fd, #1e40af); }
+.bar-col.hunger .fill { background: linear-gradient(180deg, #fdba74, #c2410c); }
+.bar-col.thirst .fill { background: linear-gradient(180deg, #67e8f9, #0e7490); }
+
+/* ───── Правый нижний блок: спидометр ───── */
+.speedo {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 200px;
+    padding: 14px 18px;
+    background: linear-gradient(180deg, rgba(15,23,52,.95), rgba(10,16,36,.95));
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.7);
+    display: none;
+}
+.speedo.on { display: block; animation: slideUp .3s ease; }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.speedo .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.speedo .gear {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: var(--gold-2);
+    letter-spacing: 2px;
+}
+.speedo .engine {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+}
+.speedo .engine.off { background: var(--text-mute); box-shadow: none; }
+.speedo .speed {
+    font-family: 'Cinzel', serif;
+    text-align: center;
+    line-height: 1;
+}
+.speedo .speed .num {
+    font-size: 44px;
+    font-weight: 700;
+    color: var(--gold-1);
+    text-shadow: 0 2px 12px var(--gold-glow);
+}
+.speedo .speed .unit {
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+.speedo .fuel-bar {
+    height: 4px;
+    background: rgba(0,0,0,.5);
+    border-radius: 2px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+.speedo .fuel-bar .fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-2), var(--gold-1));
+    width: 100%;
+    transition: width .4s;
+}
+
+/* ───── Подсказки клавиш ───── */
+.hints {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    font-size: 10px;
+    color: var(--text-mute);
+}
+.hints .hint {
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.06);
+    padding: 5px 10px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+}
+.hints .hint b { color: var(--gold-1); margin-right: 6px; }
+
+.hidden { display: none !important; }
 </style>
 </head>
 <body>
-<div class="hud" id="hud" style="display:none">
-    <div class="name"><span id="name">—</span><span id="badge" class="badge" style="display:none">ADMIN</span></div>
-    <div class="row"><span class="label">Деньги</span><span class="value">$<span id="money">0</span></span></div>
-    <div class="row"><span class="label">Уровень админа</span><span class="value" id="level">0</span></div>
-</div>
-<div class="hint" id="hint" style="display:none">F2 — админ-панель</div>
+    <div class="top-right hidden" id="topRight">
+        <div class="server">MAJESTIC.RP</div>
+        <div class="money"><span class="currency">$</span><span id="money">0</span></div>
+        <div class="bank"><span class="label">Банк</span>$<span id="bank">0</span></div>
+        <div class="player">
+            <span id="name">—</span>
+            <span class="admin-badge" id="adminBadge" style="display:none">A-<span id="adminLvl">0</span></span>
+        </div>
+    </div>
+
+    <div class="stats hidden" id="stats">
+        <div class="bar-col hp" title="Здоровье"><div class="pct" id="hpPct">100</div><div class="fill" id="hpFill" style="height:100%"></div></div>
+        <div class="bar-col armor" title="Броня"><div class="pct" id="armorPct">0</div><div class="fill" id="armorFill" style="height:0%"></div></div>
+        <div class="bar-col hunger" title="Голод"><div class="pct" id="hungerPct">100</div><div class="fill" id="hungerFill" style="height:100%"></div></div>
+        <div class="bar-col thirst" title="Жажда"><div class="pct" id="thirstPct">100</div><div class="fill" id="thirstFill" style="height:100%"></div></div>
+    </div>
+
+    <div class="speedo" id="speedo">
+        <div class="top-row">
+            <div class="gear">D · DRIVE</div>
+            <div class="engine on" id="engine"></div>
+        </div>
+        <div class="speed">
+            <div class="num" id="speed">0</div>
+            <div class="unit">km/h</div>
+        </div>
+        <div class="fuel-bar"><div class="fill" id="fuel" style="width:100%"></div></div>
+    </div>
+
+    <div class="hints hidden" id="hints">
+        <div class="hint"><b>F2</b> Админка</div>
+        <div class="hint"><b>T</b> Чат</div>
+        <div class="hint"><b>M</b> Меню</div>
+    </div>
+
 <script>
-let state = { login: '—', money: 0, adminLevel: 0 };
+let state = { login: '—', money: 0, bank: 0, adminLevel: 0, health: 100, armor: 0, hunger: 100, thirst: 100 };
 
-window.updateHUD = (data) => {
-    state = Object.assign(state, data);
-    document.getElementById('hud').style.display = 'block';
+window.initHUD = (data) => {
+    Object.assign(state, data);
+    document.getElementById('topRight').classList.remove('hidden');
+    document.getElementById('stats').classList.remove('hidden');
+    document.getElementById('hints').classList.remove('hidden');
+    apply();
+};
+
+window.patchHUD = (data) => { Object.assign(state, data); apply(); };
+
+window.tickHUD = (live) => {
+    if (live.health != null) state._liveHp = live.health;
+    if (live.armor != null) state.armor = live.armor;
+    const speedo = document.getElementById('speedo');
+    if (live.inVehicle) {
+        speedo.classList.add('on');
+        document.getElementById('speed').textContent = live.speed;
+        document.getElementById('fuel').style.width = (live.fuel || 0) + '%';
+    } else {
+        speedo.classList.remove('on');
+    }
+    apply();
+};
+
+function apply() {
     document.getElementById('name').textContent = state.login;
-    document.getElementById('money').textContent = formatMoney(state.money);
-    document.getElementById('level').textContent = state.adminLevel || 0;
-    const badge = document.getElementById('badge');
-    badge.style.display = (state.adminLevel || 0) > 0 ? 'inline-block' : 'none';
-    if ((state.adminLevel || 0) > 0) document.getElementById('hint').style.display = 'block';
-};
+    document.getElementById('money').textContent = formatN(state.money);
+    document.getElementById('bank').textContent = formatN(state.bank);
 
-window.setMoney = (m) => {
-    state.money = m;
-    document.getElementById('money').textContent = formatMoney(m);
-};
+    const adminLvl = state.adminLevel || 0;
+    document.getElementById('adminBadge').style.display = adminLvl > 0 ? 'inline-block' : 'none';
+    document.getElementById('adminLvl').textContent = adminLvl;
 
-function formatMoney(n) {
-    return (Number(n) || 0).toLocaleString('ru-RU');
+    setBar('hp', state._liveHp != null ? state._liveHp : state.health);
+    setBar('armor', state.armor);
+    setBar('hunger', state.hunger);
+    setBar('thirst', state.thirst);
 }
+
+function setBar(id, val) {
+    val = Math.max(0, Math.min(100, Math.round(val)));
+    document.getElementById(id + 'Fill').style.height = val + '%';
+    document.getElementById(id + 'Pct').textContent = val;
+}
+
+function formatN(n) { return (Number(n) || 0).toLocaleString('ru-RU'); }
 </script>
 </body>
 </html>

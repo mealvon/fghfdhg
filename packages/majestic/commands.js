@@ -1,25 +1,32 @@
 const admin = require('./admin');
 const economy = require('./economy');
+const reports = require('./reports');
+const db = require('./database');
 
 const HELP = [
-    '!{#ffd43b}=== Команды ===',
-    '/help, /me, /do, /b, /pay',
-    '/stats — статистика',
-    '!{#ffd43b}--- Админ ---',
-    '/a <текст>, /kick, /ban, /mute, /tp, /bring',
-    '/giveMoney, /setAdmin, /veh, /heal, /armor'
+    '!{#d4af37}═══ Команды Majestic RP ═══',
+    '!{#fff}/help /me /do /b /try /pay /stats',
+    '/report <текст> — обращение к админу',
+    '/cash, /bank — баланс',
+    '!{#d4af37}── Админ ──',
+    '/a /kick /ban /unban /mute /warn /tp /bring /tpc',
+    '/giveMoney /setAdmin /veh /heal /armor /spec'
 ];
 
-mp.events.addCommand('help', (player) => {
-    HELP.forEach(line => player.outputChatBox(line));
-});
+mp.events.addCommand('help', (player) => HELP.forEach(l => player.outputChatBox(l)));
 
 mp.events.addCommand('stats', (player) => {
     if (!player.authorized) return;
-    player.outputChatBox(`!{#74c0fc}Логин: !{#fff}${player.login}`);
-    player.outputChatBox(`!{#74c0fc}Деньги: !{#fff}$${player.money}`);
-    player.outputChatBox(`!{#74c0fc}Уровень админа: !{#fff}${player.adminLevel || 0}`);
+    player.outputChatBox(`!{#d4af37}═ Профиль ═`);
+    player.outputChatBox(`!{#94a3b8}Логин: !{#fff}${player.login}`);
+    player.outputChatBox(`!{#94a3b8}Наличные: !{#22c55e}$${player.money}`);
+    player.outputChatBox(`!{#94a3b8}Банк: !{#22c55e}$${player.bank || 0}`);
+    player.outputChatBox(`!{#94a3b8}Уровень админа: !{#fff}${player.adminLevel || 0}`);
+    player.outputChatBox(`!{#94a3b8}Предупреждений: !{#fff}${player.warns || 0}/3`);
 });
+
+mp.events.addCommand('cash', (p) => { if (p.authorized) p.outputChatBox(`!{#22c55e}Наличные: $${p.money}`); });
+mp.events.addCommand('bank', (p) => { if (p.authorized) p.outputChatBox(`!{#22c55e}Банк: $${p.bank || 0}`); });
 
 mp.events.addCommand('me', (player, action) => {
     if (!player.authorized || !action) return;
@@ -31,27 +38,42 @@ mp.events.addCommand('do', (player, desc) => {
     mp.players.broadcast(`!{#c084fc}* ${desc} (( ${player.login} ))`);
 });
 
+mp.events.addCommand('try', (player, action) => {
+    if (!player.authorized || !action) return;
+    const success = Math.random() < 0.5;
+    mp.players.broadcast(`!{#c084fc}* ${player.login} пытается ${action} — ${success ? '!{#22c55e}успешно' : '!{#ef4444}неудачно'}`);
+});
+
 mp.events.addCommand('b', (player, text) => {
     if (!player.authorized || !text) return;
     mp.players.broadcast(`!{#94a3b8}((${player.login}: ${text}))`);
 });
 
-mp.events.addCommand('pay', (player, fullText, targetId, amount) => {
+mp.events.addCommand('pay', (player, _, targetId, amount) => {
     if (!player.authorized) return;
-    const t = admin.findPlayer(targetId);
+    const t = admin.findByLoginOrId(targetId);
     const n = parseInt(amount, 10);
     if (!t || !t.authorized || isNaN(n) || n <= 0) {
-        player.outputChatBox('!{#ff6b6b}Использование: /pay <id> <сумма>');
+        player.outputChatBox('!{#ef4444}/pay <id|login> <сумма>');
         return;
     }
     if (t.id === player.id) return;
     if (!economy.takeMoney(player, n)) {
-        player.outputChatBox('!{#ff6b6b}Недостаточно денег.');
+        player.outputChatBox('!{#ef4444}Недостаточно наличных.');
         return;
     }
     economy.giveMoney(t, n);
-    player.outputChatBox(`!{#51cf66}Вы передали $${n} игроку ${t.login}.`);
-    t.outputChatBox(`!{#51cf66}Вам передал $${n} игрок ${player.login}.`);
+    player.outputChatBox(`!{#22c55e}Вы передали $${n} → ${t.login}.`);
+    t.outputChatBox(`!{#22c55e}Вам передал $${n} ← ${player.login}.`);
+});
+
+mp.events.addCommand('report', (player, text) => {
+    if (!player.authorized || !text) {
+        player.outputChatBox('!{#ef4444}/report <текст обращения>');
+        return;
+    }
+    const r = reports.create(player, text);
+    player.outputChatBox(`!{#d4af37}Репорт #${r.id} отправлен. Дождитесь ответа.`);
 });
 
 // --- Админские ---
@@ -61,51 +83,35 @@ mp.events.addCommand('a', (player, text) => {
     admin.broadcastAdmin(`${player.login}: ${text}`);
 });
 
-mp.events.addCommand('kick', (player, _full, id, ...reasonParts) => {
-    const t = admin.findPlayer(id);
-    admin.kick(player, t, reasonParts.join(' '));
+mp.events.addCommand('kick', (player, _full, id, ...r) => {
+    admin.kick(player, admin.findByLoginOrId(id), r.join(' '));
 });
-
-mp.events.addCommand('ban', (player, _full, id, ...reasonParts) => {
-    const t = admin.findPlayer(id);
-    admin.ban(player, t, reasonParts.join(' '));
+mp.events.addCommand('ban', (player, _full, id, ...r) => {
+    admin.ban(player, admin.findByLoginOrId(id), r.join(' '));
 });
-
+mp.events.addCommand('unban', (player, _full, login) => {
+    if (admin.requireAdmin(player, 4)) admin.unban(player, login);
+});
 mp.events.addCommand('mute', (player, _full, id, minutes) => {
-    const t = admin.findPlayer(id);
-    admin.mute(player, t, minutes);
+    admin.mute(player, admin.findByLoginOrId(id), minutes);
 });
-
-mp.events.addCommand('tp', (player, _full, id) => {
-    const t = admin.findPlayer(id);
-    admin.teleportTo(player, t);
+mp.events.addCommand('warn', (player, _full, id, ...r) => {
+    admin.warn(player, admin.findByLoginOrId(id), r.join(' '));
 });
-
-mp.events.addCommand('bring', (player, _full, id) => {
-    const t = admin.findPlayer(id);
-    admin.bringTo(player, t);
+mp.events.addCommand('tp', (player, _full, id) => admin.teleportTo(player, admin.findByLoginOrId(id)));
+mp.events.addCommand('bring', (player, _full, id) => admin.bringTo(player, admin.findByLoginOrId(id)));
+mp.events.addCommand('tpc', (player, _full, x, y, z) => {
+    const xn = parseFloat(x), yn = parseFloat(y), zn = parseFloat(z);
+    if (isNaN(xn) || isNaN(yn) || isNaN(zn)) return;
+    if (admin.requireAdmin(player, 1)) player.position = new mp.Vector3(xn, yn, zn);
 });
-
 mp.events.addCommand('giveMoney', (player, _full, id, amount) => {
-    const t = admin.findPlayer(id);
-    admin.giveMoneyTo(player, t, amount);
+    admin.giveMoneyTo(player, admin.findByLoginOrId(id), amount);
 });
-
 mp.events.addCommand('setAdmin', (player, _full, id, level) => {
-    const t = admin.findPlayer(id);
-    admin.setAdminLevel(player, t, level);
+    admin.setAdminLevel(player, admin.findByLoginOrId(id), level);
 });
-
-mp.events.addCommand('veh', (player, _full, model) => {
-    admin.spawnVeh(player, model);
-});
-
-mp.events.addCommand('heal', (player, _full, id) => {
-    const t = id ? admin.findPlayer(id) : player;
-    admin.heal(player, t);
-});
-
-mp.events.addCommand('armor', (player, _full, id) => {
-    const t = id ? admin.findPlayer(id) : player;
-    admin.armor(player, t);
-});
+mp.events.addCommand('veh', (player, _full, model) => admin.spawnVeh(player, model));
+mp.events.addCommand('heal', (player, _full, id) => admin.heal(player, id ? admin.findByLoginOrId(id) : player));
+mp.events.addCommand('armor', (player, _full, id) => admin.armor(player, id ? admin.findByLoginOrId(id) : player));
+mp.events.addCommand('spec', (player, _full, id) => admin.spectate(player, admin.findByLoginOrId(id)));

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>Death</title>
+<link rel="stylesheet" href="../shared/theme.css" />
+<style>
+body {
+    background: radial-gradient(ellipse at center, rgba(120, 0, 0, .4) 0%, rgba(0,0,0,.92) 70%, #000 100%);
+    pointer-events: none;
+    overflow: hidden;
+}
+.wrap {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    animation: fadeIn .8s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.title {
+    font-family: 'Cinzel', 'Trajan Pro', 'Georgia', serif;
+    font-size: 96px;
+    font-weight: 700;
+    background: linear-gradient(180deg, #fee2e2 0%, #ef4444 60%, #7f1d1d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 24px;
+    text-shadow: 0 8px 40px rgba(239,68,68,.4);
+    margin-bottom: 12px;
+    animation: pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+
+.subtitle {
+    color: var(--text-dim);
+    font-size: 14px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 60px;
+}
+
+.counter {
+    display: flex; align-items: baseline; gap: 12px;
+    font-family: 'Cinzel', serif;
+}
+.counter .label { color: var(--text-mute); letter-spacing: 4px; font-size: 13px; text-transform: uppercase; }
+.counter .num {
+    font-size: 52px;
+    color: var(--gold-1);
+    text-shadow: 0 4px 16px var(--gold-glow);
+    min-width: 60px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.divider { width: 140px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-2), transparent); margin: 30px 0; }
+.hint { color: var(--text-mute); font-size: 11px; letter-spacing: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="title">WASTED</div>
+    <div class="subtitle">Вы выбыли из игры</div>
+    <div class="counter"><span class="label">Воскрешение через</span><span class="num" id="count">8</span><span class="label">сек</span></div>
+    <div class="divider"></div>
+    <div class="hint">MAJESTIC LOCAL ROLEPLAY</div>
+</div>
+<script>
+let n = 8;
+let t = null;
+window.startCountdown = (sec) => {
+    n = sec || 8;
+    document.getElementById('count').textContent = n;
+    if (t) clearInterval(t);
+    t = setInterval(() => {
+        n = Math.max(0, n - 1);
+        document.getElementById('count').textContent = n;
+        if (n === 0) clearInterval(t);
+    }, 1000);
+};
+</script>
+</body>
+</html>
